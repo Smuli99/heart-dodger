@@ -1,5 +1,6 @@
 pub mod player;
 pub use player::Player;
+pub use player::PlayerBuilder;
 
 pub mod collectible;
 pub use collectible::Collectible;
