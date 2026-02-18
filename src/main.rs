@@ -1,8 +1,6 @@
-mod unit;
-
-#[allow(unused)]
-use crate::{ unit::Player, unit::Collectible, unit::Enemy, unit::Wall };
+use application::game;
 
 fn main() {
-    println!("Hello, world!");
+    #[allow(unused)]
+    let mut game = game::Game::new();
 }
