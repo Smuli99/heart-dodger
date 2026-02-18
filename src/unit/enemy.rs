@@ -1,13 +1,19 @@
 #[derive(Default)]
 #[allow(unused)]
 pub struct Enemy {
-    name: String,
+    speed: f64,
 }
 
 impl Enemy {
     pub fn new() -> Self {
         Self {
-            name: "Thanos".to_string(),
+            speed: 1.0,
+        }
+    }
+
+    pub fn with_speed(speed: f64) -> Self {
+        Self {
+            speed: speed,
         }
     }
 }
