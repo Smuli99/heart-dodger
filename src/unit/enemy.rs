@@ -1,5 +1,11 @@
-use crate::point::Point2d;
-use crate::traits::Position;
+use crate::{
+    point::Point2d,
+    traits::Position,
+    ui::draw::Draw,
+};
+
+use num::traits::ToPrimitive;
+use std::fmt;
 
 #[derive(Default)]
 #[allow(unused)]
@@ -24,5 +30,12 @@ impl Enemy {
     }
 }
 
-// implementing Position trait
+impl fmt::Display for Enemy {
+    fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
+        write!(f, "👾")
+    }
+}
+
+// implementing Position and Draw trait
 crate::position_impl!(Enemy, f64);
+crate::draw_impl!(Enemy, f64);
