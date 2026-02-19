@@ -2,6 +2,7 @@ use crate::{
     point::Point2d,
     traits::Position,
     ui::draw::Draw,
+    enums::Direction,
 };
 
 use num::traits::ToPrimitive;
@@ -12,6 +13,7 @@ pub struct Player {
     speed: f64,
     health: u8,
     position: Point2d<f64>,
+    direction: Direction,
 }
 
 impl Player {
@@ -42,11 +44,54 @@ impl Player {
     pub fn speed(&self) -> f64 {
         self.speed
     }
+
+    pub fn accelerate(&mut self) {
+        // player max speed 1.0
+        self.speed = (self.speed + 0.1).min(1.0);        
+    }
+
+    pub fn decelerate(&mut self) {
+        // player min speed 0.0
+        self.speed = (self.speed - 0.1).max(0.0);
+    }
+
+    pub fn move_forward(&mut self) {
+        self.position += self.direction.as_coordinates() * self.speed;
+    }
+
+    pub fn forward_position(&self) -> Point2d<u16> {
+        let next = self.position + self.direction.as_coordinates() * self.speed;
+
+        Point2d::new(
+            next.x.round() as u16,
+            next.y.round() as u16,
+        )
+    }
+
+    pub fn turn_left(&mut self) {
+        self.direction = self.direction.turn_left();
+    }
+
+    pub fn turn_right(&mut self) {
+        self.direction = self.direction.turn_right();
+    }
 }
 
+// Display trait impl
 impl fmt::Display for Player {
     fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
-        write!(f, "🚶🏽‍♂️‍➡️")
+        let symbol: &str = match self.direction {
+            Direction::North     => "🧍🏽‍♂️",
+            Direction::NorthEast => "🚶🏽‍♂️‍➡️",
+            Direction::East      => "🏃🏽‍♂️‍➡️",
+            Direction::SouthEast => "🚶🏽‍♂️‍➡️",
+            Direction::South     => "🧍🏽‍♂️",
+            Direction::SouthWest => "🚶🏽‍♂️",
+            Direction::West      => "🏃🏽‍♂️",
+            Direction::NorthWest => "🚶🏽‍♂️",
+        };
+        
+        write!(f, "{}", symbol)
     }
 }
 
@@ -58,6 +103,8 @@ crate::draw_impl!(Player, f64);
 pub struct PlayerBuilder {
     speed: f64,
     health: u8,
+    position: Point2d<f64>,
+    direction: Direction,
 }
 
 impl PlayerBuilder {
@@ -65,6 +112,8 @@ impl PlayerBuilder {
         Self {
             speed: 1.0,
             health: 10,
+            position: Point2d::new(1.0, 1.0),
+            direction: Direction::default(),
         }
     }
 
@@ -73,8 +122,19 @@ impl PlayerBuilder {
         self
     }
 
+    
     pub fn health(mut self, health: u8) -> Self {
         self.health = health;
+        self
+    }
+
+    pub fn position(mut self, x: f64, y: f64) -> Self {
+        self.position = Point2d::new(x, y);
+        self
+    }
+
+    pub fn direction(mut self, x: f64, y: f64) -> Self {
+        self.direction = Direction::from_coordinates(x, y);
         self
     }
 
@@ -82,7 +142,8 @@ impl PlayerBuilder {
         Player {
             speed: self.speed,
             health: self.health,
-            position: Point2d::new(0.0, 0.0),
+            position: self.position,
+            direction: self.direction,
         }
     }
 }
