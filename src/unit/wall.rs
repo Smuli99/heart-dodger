@@ -1,7 +1,13 @@
-use crate::point::Point2d;
-use crate::traits::Position;
+use crate::{
+    point::Point2d,
+    traits::Position,
+    ui::draw::Draw,
+};
 
-#[derive(Debug, Default)]
+use num::traits::ToPrimitive;
+use std::fmt;
+
+#[derive(Default)]
 pub struct Wall {
     position: Point2d<u16>,
 }
@@ -14,5 +20,12 @@ impl Wall {
     }
 }
 
-// implement Position trait
+impl fmt::Display for Wall {
+    fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
+        write!(f, "|")
+    }
+}
+
+// implement Position and Draw trait
 crate::position_impl!(Wall, u16);
+crate::draw_impl!(Wall, u16);
