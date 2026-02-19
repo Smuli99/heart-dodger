@@ -1,7 +1,13 @@
+use std::{
+    io::{stdout, Stdout, Write},
+    time::{Duration, Instant},
+};
+
 use rand::rngs::ThreadRng;
 
 use crate::{
     traits::*,
+    ui::{draw::*, UI},
     unit::Collectible,
     unit::Enemy,
     unit::Wall,
@@ -11,11 +17,13 @@ use crate::{
 pub struct Game {
     height: u16,
     width: u16,
+    stdout: Stdout,
     enemies: Vec<Enemy>,
     n_random_walls: u16,
     walls: Vec<Wall>,
     collectible: Collectible,
     player: Player,
+    ui: UI,
     rng: ThreadRng,
 }
 
@@ -89,7 +97,9 @@ impl GameBuilder {
             walls: self.walls,
             collectible: Collectible::default(),
             player: self.player_builder.build(),
+            ui: UI::new(),
             rng: rand::rng(),
+            stdout: stdout(),
         }
     }
 }
@@ -104,6 +114,8 @@ impl Game {
     }
 
     fn init(&mut self) {
+        self.ui.prepare();
+
         // surround the game area with walls
         for x in 0..self.width {
             self.walls.push(Wall::new(x, 0));
@@ -129,7 +141,8 @@ impl Game {
                 1.0..(self.height - 1).into(),
             );
         });
-
+        
+        // randomize collectible position
         while self
             .walls
             .iter()
@@ -143,29 +156,31 @@ impl Game {
         }
     }
 
+    fn draw(&mut self) {
+        self.ui.clear();
+        let mut buffer: Vec<u8> = Vec::new();
+        // draw walls
+        self.walls.iter().for_each(|wall| wall.draw(&mut buffer));
+        // draw player
+        self.player.draw(&mut buffer);
+        // draw enemies
+        self.enemies.iter().for_each(|enemy| enemy.draw(&mut buffer));
+        // draw collectible
+        self.collectible.draw(&mut buffer);
+        self.stdout.write_all(&buffer).expect("failed to write stdout");
+        self.stdout.flush().expect("Failed to flush stdout");
+    }
+
     pub fn run(&mut self) {
         self.init();
-        // print positions
-        println!(
-            "Player: x = {}, y = {}",
-            self.player.position().x,
-            self.player.position().y
-        );
-        println!(
-            "Collectible: x = {}, y = {}",
-            self.collectible.position().x,
-            self.collectible.position().y
-        );
-        for enemy in &self.enemies {
-            println!(
-                "Enemy: x = {}, y = {}",
-                enemy.position().x,
-                enemy.position().y
-            );
+
+        let start_time = Instant::now();
+        while Instant::now() - start_time < Duration::from_secs(3) {
+            self.draw();
+            std::thread::sleep(Duration::from_millis(100));
         }
-        for wall in &self.walls {
-            println!("Wall: x = {}, y = {}", wall.position().x, wall.position().y);
-        }
+
+        self.ui.restore();
     }
 }
 
