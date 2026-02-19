@@ -6,6 +6,7 @@ use std::{
 use rand::rngs::ThreadRng;
 
 use crate::{
+    hud::Hud,
     input,
     traits::*,
     ui::{draw::*, UI},
@@ -216,6 +217,7 @@ impl Game {
         self.enemies.iter().for_each(|enemy| enemy.draw(&mut buffer));
         // draw collectible
         self.collectible.draw(&mut buffer);
+        Hud::new(self.score, &self.player, 0).draw(&mut buffer);
         self.stdout.write_all(&buffer).expect("failed to write stdout");
         self.stdout.flush().expect("Failed to flush stdout");
     }
