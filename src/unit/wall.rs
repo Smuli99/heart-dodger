@@ -1,13 +1,18 @@
+use crate::point::Point2d;
+use crate::traits::Position;
+
 #[derive(Debug, Default)]
 pub struct Wall {
-    pub name: String,
+    position: Point2d<u16>,
 }
 
 impl Wall {
-    // This will change
-    pub fn new() -> Self {
+    pub fn new(x: u16, y: u16) -> Self {
         Self {
-            name: "I'm a wall!".to_string(),
+            position: Point2d::new(x, y),
         }
     }
 }
+
+// implement Position trait
+crate::position_impl!(Wall, u16);

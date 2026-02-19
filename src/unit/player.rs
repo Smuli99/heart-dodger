@@ -1,8 +1,12 @@
+use crate::point::Point2d;
+use crate::traits::Position;
+
 #[derive(Default)]
 #[allow(unused)]
 pub struct Player {
     speed: f64,
     health: u8,
+    position: Point2d<f64>,
 }
 
 impl Player {
@@ -35,6 +39,8 @@ impl Player {
     }
 }
 
+//implement Position trait
+crate::position_impl!(Player, f64);
 
 // Player Builder
 pub struct PlayerBuilder {
@@ -64,6 +70,7 @@ impl PlayerBuilder {
         Player {
             speed: self.speed,
             health: self.health,
+            position: Point2d::new(0.0, 0.0),
         }
     }
 }

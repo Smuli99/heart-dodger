@@ -1,13 +1,11 @@
+use crate::point::Point2d;
+use crate::traits::Position;
+
 #[derive(Default)]
 #[allow(unused)]
 pub struct Collectible {
-    name: String,
+    position: Point2d<u16>,
 }
 
-impl Collectible {
-    pub fn new() -> Self {
-        Self {
-            name: "Collect me pleaseee...".to_string(),
-        }
-    }
-}
+// implementing Position trait
+crate::position_impl!(Collectible, u16);
