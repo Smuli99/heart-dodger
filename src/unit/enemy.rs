@@ -1,7 +1,7 @@
 use crate::{
     point::Point2d,
     traits::Position,
-    ui::draw::Draw,
+    ui::draw::Draw, unit::Player,
 };
 
 use num::traits::ToPrimitive;
@@ -28,6 +28,11 @@ impl Enemy {
             position: Point2d::new(0.0, 0.0),
         }
     }
+
+    pub fn move_towards_player(&mut self, player: &Player) {
+        let direction = (player.position() - self.position()).normalize();
+        self.position += direction * self.speed;
+    } 
 }
 
 impl fmt::Display for Enemy {
