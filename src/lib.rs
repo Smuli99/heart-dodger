@@ -7,3 +7,4 @@ pub mod enums;
 
 pub mod ui;
 pub mod input;
+pub mod hud;
