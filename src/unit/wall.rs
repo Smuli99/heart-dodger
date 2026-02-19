@@ -22,7 +22,7 @@ impl Wall {
 
 impl fmt::Display for Wall {
     fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
-        write!(f, "|")
+        write!(f, "▓")
     }
 }
 
